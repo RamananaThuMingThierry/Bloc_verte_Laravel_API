@@ -61,16 +61,7 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
             'contact' => 'required|string|min:10|max:10|unique:contact',
             'mot_de_passe' => 'required|min:6|confirmed',
-        ]
-        // , [
-        //     'pseudo.required' => 'Le champ pseudo est obligatoire',
-        //     'email.required' => 'Le champ email est obligatoire',
-        //     'email.unique' => 'L\'adresse email existe déjà!',
-        //     'pseudo.unique' => 'Le pseudo existe déjà!',
-        //     'mot_de_passe.required' => 'Le mot de passe est obligatoire',
-        //     'mot_de_passe.min' => 'Le mot de passe doit avoir au moins 8 caractères!',
-        // ]
-        );
+        ]);
 
         if($validator->fails()){
             return response()->json([

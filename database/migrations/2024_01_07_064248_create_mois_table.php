@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nom_mois');
             $table->date("date_mois");
-            $table->string("montant_mois");
-            $table->string("nouvel_index");
-            $table->string("ancien_index");
+            $table->float("montant_mois");
+            $table->float("nouvel_index");
+            $table->float("ancien_index");
             $table->boolean("payer");
             $table->foreignId('users_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();

@@ -13,7 +13,7 @@ class Mois extends Model
 
     public $table = "mois";
 
-    protected $fillabe = [
+    protected $fillable = [
         "nom_mois",
         "date_mois",
         "montant_mois",

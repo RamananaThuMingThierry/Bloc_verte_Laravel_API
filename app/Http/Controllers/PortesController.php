@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PortesController extends Controller
 {
+    
     // Récupérer tous les portes
     public function index(){
         return response()->json([
@@ -135,7 +136,7 @@ class PortesController extends Controller
                 ], 200);
             }else{
                 return response()->json([
-                    'message' => 'Veuillez authentifier !'
+                    'message' => 'Autorisation refusée!'
                 ], 404);    
             }
         }else{
@@ -166,4 +167,5 @@ class PortesController extends Controller
             ], 403);
         }
     }
+
 }
