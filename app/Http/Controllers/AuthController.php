@@ -59,6 +59,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'pseudo' => 'required|max:255|unique:users',
             'email' => 'required|email|max:255|unique:users|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
+            'contact' => 'required|string|min:10|max:10|unique:contact',
             'mot_de_passe' => 'required|min:6|confirmed',
         ]
         // , [
@@ -95,24 +96,15 @@ class AuthController extends Controller
  
     public function update(Request $request)
     {
-        
         $validator = Validator::make($request->all(), [
-            'pseudo' => 'required|max:255|unique:users',
-            'contact' => 'required|number|unique:users',
+            'pseudo' => 'required|max:255',
+            'contact' => 'required|string|max:10|min:10',
             'genre' => 'required|string',
             'roles' => 'required|string',
-            'email' => 'required|email|max:255|unique:users|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
+            'adresse' => 'required|string',
+            'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
             'mot_de_passe' => 'required|min:6|confirmed',
-        ]
-        // , [
-        //     'pseudo.required' => 'Le champ pseudo est obligatoire',
-        //     'email.required' => 'Le champ email est obligatoire',
-        //     'email.unique' => 'L\'adresse email existe déjà!',
-        //     'pseudo.unique' => 'Le pseudo existe déjà!',
-        //     'mot_de_passe.required' => 'Le mot de passe est obligatoire',
-        //     'mot_de_passe.min' => 'Le mot de passe doit avoir au moins 8 caractères!',
-        // ]
-        );
+        ]);
 
         if($validator->fails()){
             return response()->json([
@@ -128,12 +120,13 @@ class AuthController extends Controller
                 'genre' => $request->genre,
                 'roles' => $request->roles,
                 'image' => $image,
+                'adresse' => $request->adresse,
                 'email' => $request->email,
                 'mot_de_passe' => Hash::make($request->mot_de_passe)
             ]);
            
             return response()->json([
-                'message' => 'Inscription avec succès !',
+                'message' => 'Modification avec succès !',
             ], 200);
         }
     }
