@@ -18,7 +18,7 @@ class Index extends Model
         "nouvel_index",
         "ancien_index",
         "payer",
-        "user_id",
+        "users_id",
         "portes_id",
         "mois_id"
     ];

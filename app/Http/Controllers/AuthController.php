@@ -15,15 +15,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
             'mot_de_passe' => 'required|min:6',
-        ]
-        // ,
-        //  [
-        //     'email.required' => 'Le champ d\'email est obligatoire.',
-        //     'email.email' => 'Le champ d\'email doit être une adresse email valide.',
-        //     'mot_de_passe.required' => 'Le champ de mot de passe est obligatoire.',
-        //     'mot_de_passe.min' => 'Le champ de mot de passe doit avoir au mois 6 caractère.',
-        // ]
-    );
+        ]);
 
         if($validator->fails()){
             return response()->json([
@@ -59,7 +51,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'pseudo' => 'required|max:255|unique:users',
             'email' => 'required|email|max:255|unique:users|regex:/^[a-zA-Z0-9\.\-\_]+@[a-zA-Z0-9\.\-\_]+\.[a-zA-Z]+$/',
-            'contact' => 'required|string|min:10|max:10|unique:contact',
+            'contact' => 'required|string|min:10|max:10|unique:users',
             'mot_de_passe' => 'required|min:6|confirmed',
         ]);
 
@@ -72,6 +64,7 @@ class AuthController extends Controller
             $user = User::create([
                 'pseudo' => $request->pseudo,
                 'email' => $request->email,
+                'contact' => $request->contact,
                 'mot_de_passe' => Hash::make($request->mot_de_passe)
             ]);
 

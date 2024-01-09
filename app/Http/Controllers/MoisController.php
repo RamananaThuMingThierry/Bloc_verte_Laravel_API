@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Mois;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MoisController extends Controller
@@ -16,20 +18,27 @@ class MoisController extends Controller
 
     public function store(Request $request){
 
+        
+        $autorisation = false;
        
         $nom_mois = $request->nom_mois;
         $date_mois = $request->date_mois;
+
+        $date = Carbon::parse($date_mois);
+        $year = $date->format("Y");
+
         $montant_mois = $request->montant_mois;
         $nouvel_index = $request->nouvel_index;
         $ancien_index = $request->ancien_index;
         $payer = $request->payer;
-
+        
         $validator = Validator::make($request->all(), [
             'nom_mois' => 'required|string',
             'date_mois' => 'required|date',
             'montant_mois' => 'required|numeric|regex:/^\\d+(\\.\\d{1,2})?$/',
             'nouvel_index' => 'required|numeric|regex:/^\\d+(\\.\\d{1,2})?$/',
             'ancien_index' => 'required|numeric|regex:/^\\d+(\\.\\d{1,2})?$/',
+            'payer' => 'required|boolean'
         ]);
 
         if($validator->fails()){
@@ -38,20 +47,58 @@ class MoisController extends Controller
             ]);
         }else{
 
-            $mois = Mois::create([
-                'nom_mois' => $nom_mois,
-                'date_mois' => $date_mois,
-                'montant_mois' => $montant_mois,
-                'nouvel_index' => $nouvel_index,
-                'ancien_index' => $ancien_index,
-                'payer' => $payer,
-                'users_id' => auth()->user()->id
-            ]);
+            $verification_nom_mois = DB::table('mois')->where('nom_mois', $nom_mois)->exists();
 
-            return response()->json([
-                'mois' => $mois,
-                'message' => 'Enregistrement effectuée!'
-            ], 200);
+            
+            if($verification_nom_mois){
+                $get_mois = DB::table('mois')->where('nom_mois', $nom_mois)->first();
+
+                $get_date = Carbon::parse($get_mois->date_mois);
+                $get_year = $get_date->format("Y");
+
+                if($year != $get_year){
+                    $autorisation = true;
+                }
+            }else{
+
+                $autorisation = true;
+            }
+
+            if($autorisation){
+
+                if($ancien_index > $nouvel_index){
+
+                    //*********************************** */
+                    return response()->json([
+                        'message' => 'L\'index '
+                    ], 403);
+
+                }else{
+                    
+                    $mois = Mois::create([
+                        'nom_mois' => $nom_mois,
+                        'date_mois' => $date_mois,
+                        'montant_mois' => $montant_mois,
+                        'nouvel_index' => $nouvel_index,
+                        'ancien_index' => $ancien_index,
+                        'payer' => $payer,
+                        'users_id' => auth()->user()->id
+                    ]);
+        
+                    return response()->json([
+                        'mois' => $mois,
+                        'message' => 'Enregistrement effectuée!'
+                    ], 200);
+
+                }
+
+            }else{
+
+                return response()->json([
+                    'message' => 'Ce mois existe déjà!'
+                ], 403);
+
+            }
         }
     }
 
@@ -77,20 +124,30 @@ class MoisController extends Controller
     public function update(Request $request, $mois_id){
 
         $autorisation = false;
+        
+        $get_mois = Mois::find($mois_id);
+       
+        $get_date_mois = $get_mois->date_mois;
+        $get_date = Carbon::parse($get_date_mois);
+        $get_year = $get_date->format("Y");
 
-        $mois = Mois::find($mois_id);
-            
         $nom_mois = $request->nom_mois;
         $date_mois = $request->date_mois;
+
+        $date = Carbon::parse($date_mois);
+        $year = $date->format('Y');
+
+        dd($year);
+
         $montant_mois = $request->montant_mois;
         $nouvel_index = $request->nouvel_index;
         $ancien_index = $request->ancien_index;
         $payer = $request->payer;
 
         // Vérifier si ce mois existe ou pas
-        if($mois){
+        if($get_mois){
 
-            if($mois->users_id == auth()->user()->id){
+            if($get_mois->users_id == auth()->user()->id){
                 
                 $validator = Validator::make($request->all(), [
                     'nom_mois' => 'alpha|required|string',
