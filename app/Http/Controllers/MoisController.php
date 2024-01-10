@@ -117,7 +117,9 @@ class MoisController extends Controller
                 ], 400);
             }
         }else{
-
+            return response()->json([
+                'message' => 'Ce mois n\'existe pas dans la base de données!'
+            ], 400);
         }
     }
 
@@ -237,7 +239,7 @@ class MoisController extends Controller
             if($mois->users_id == auth()->user()->id){
                 $mois->delete();
                 return response()->json([
-                    'message' => 'Suppresion refusée!'
+                    'message' => 'Suppresion effectuée!'
                 ], 200);   
             }else{
                 return response()->json([
